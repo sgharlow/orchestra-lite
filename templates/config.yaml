@@ -1,0 +1,19 @@
+# Orchestra Lite Configuration
+
+project: "My Project"
+
+# Command to run tests (used by /orchestra done)
+# Uncomment and customize for your project:
+test_command: "npm test"
+# test_command: "pytest"
+# test_command: "go test ./..."
+# test_command: "cargo test"
+# test_command: "make test"
+
+# Default task time estimate (minutes)
+default_estimate: 60
+
+# Git settings
+git:
+  main_branch: "main"
+  auto_push: true
