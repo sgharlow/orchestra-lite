@@ -410,6 +410,10 @@ Preserves your branch so you can resume later with `/orchestra continue`.
 
 ## Examples
 
+### Real Project Example
+See [mdlink-check](https://github.com/sgharlow/mdlink-check) — A complete CLI tool built using Orchestra Lite, showing the full workflow from planning through 5 completed tasks.
+
+### Template Examples
 See the `examples/` directory:
 - `GOAL-auth-example.md` — A filled-out goal for user authentication
 - `TASKS-example.md` — Task board with various states
