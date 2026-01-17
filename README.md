@@ -16,7 +16,7 @@ Orchestra Lite lets you run multiple Claude Code instances in parallel, coordina
 ### 1. Initialize in your project
 
 ```bash
-curl -sL https://raw.githubusercontent.com/YOUR-USERNAME/orchestra-lite/main/init-orchestra.sh | bash
+curl -sL https://raw.githubusercontent.com/sgharlow/orchestra-lite/master/init-orchestra.sh | bash
 # Or download and run: bash init-orchestra.sh
 ```
 
