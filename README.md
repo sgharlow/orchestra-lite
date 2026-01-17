@@ -1,5 +1,8 @@
 # Orchestra Lite
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Version](https://img.shields.io/github/v/release/sgharlow/orchestra-lite)](https://github.com/sgharlow/orchestra-lite/releases)
+
 **Simple multi-agent coordination for Claude Code**
 
 Orchestra Lite lets you run multiple Claude Code instances in parallel, coordinating through simple markdown files and git branches. No databases, no daemons, no complexity.
