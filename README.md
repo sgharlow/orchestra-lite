@@ -1,5 +1,9 @@
 # Orchestra Lite
 
+[![Skill Crossroads](https://skillcrossroads.com/api/badge/sgharlow/orchestra-lite.svg)](https://skillcrossroads.com/s/sgharlow/orchestra-lite)
+
+Claude Code artifacts graded by [Skill Crossroads](https://skillcrossroads.com) — click the badge for the evidence-cited scorecard.
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Version](https://img.shields.io/github/v/release/sgharlow/orchestra-lite)](https://github.com/sgharlow/orchestra-lite/releases)
 
