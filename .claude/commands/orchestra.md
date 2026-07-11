@@ -1,15 +1,59 @@
+---
+description: Multi-agent coordination for parallel development — plan tasks from a goal, claim and complete them on task branches, track progress and blockers
+argument-hint: "[plan|replan|split|work|continue|next|done|stuck|drop|status|context|decide] [task-id] [reason/topic]"
+---
+
 # /orchestra [action]
 
 Multi-agent coordination system for parallel development.
 
 ## Quick Reference
 ```
-/orchestra plan      - Create/update tasks from goal
-/orchestra status    - Show progress and blockers
-/orchestra work      - Claim and complete next task
-/orchestra done ID   - Mark task complete
-/orchestra stuck ID  - Mark task blocked
+Planning:
+/orchestra plan       - Create/update tasks from goal
+/orchestra replan     - Re-evaluate remaining work
+/orchestra split ID   - Break a large task into subtasks
+
+Working:
+/orchestra work       - Claim and complete next ready task
+/orchestra work ID    - Claim a specific ready task
+/orchestra continue   - Resume your in-progress task
+/orchestra next       - Show next task without claiming
+
+Completion:
+/orchestra done ID    - Mark task complete
+/orchestra stuck ID   - Mark task blocked (keeps branch)
+/orchestra drop ID    - Unclaim task (discards code changes)
+
+Utility:
+/orchestra status     - Show progress and blockers
+/orchestra context    - Show recent decisions and outputs
+/orchestra decide     - Log an architectural decision
 ```
+
+## Preconditions & Failure Modes
+
+Check these before executing any action, and fail with a clear message instead of guessing:
+
+- **Missing state files:** if `.orchestra/` (or `GOAL.md`/`TASKS.md`/`DECISIONS.md`) doesn't
+  exist, stop and tell the user to initialize the orchestra structure first — never invent
+  state. `/orchestra plan` may create `TASKS.md`/`PLAN.md`, but never fabricates `GOAL.md`.
+- **Branch identity unavailable:** if `git branch --show-current` returns empty (detached
+  HEAD) or fails (not a git repo), report that branch-based identity can't be determined
+  and stop rather than acting as an unassigned worker.
+- **`work` while already owning a task:** if you're on a `task/XXX` branch, don't claim
+  another task — suggest `/orchestra continue` or `/orchestra done XXX` instead.
+- **Claim races:** the branch is the lock. If `task/[ID]` already exists (locally or on the
+  remote), the task is taken — pick the next Ready task, never reuse the branch.
+- **Unknown/already-done IDs:** `done`, `stuck`, `drop`, and `split` on an ID that has no
+  task file in `.orchestra/tasks/` (or that is already in `done/`) report the mismatch and
+  stop — no bookkeeping changes.
+- **ID generation:** "next available ID" means one greater than the highest ID present in
+  `tasks/` AND `done/` combined — deleted or non-sequential files must not cause reuse.
+- **Dependency sanity:** a dependency that references a missing task, or a dependency
+  cycle, is reported as a planning error to fix — tasks involved stay Blocked.
+- **Merge conflicts on `done`:** stop at the conflict, list conflicted files, and hand
+  resolution to the user (see Git Workflow Reference) — never force-resolve.
 
 ## Worker Identity
 
@@ -48,7 +92,12 @@ Analyze GOAL.md and create/update tasks. Safe to run multiple times.
    - Add new tasks to appropriate section (Ready or Blocked)
    - Update progress count
 7. Update `.orchestra/PLAN.md` if phases change
-8. Report summary of changes
+8. Verify before reporting:
+   - Re-read each created task file — it exists and is well-formed
+   - No duplicate IDs across `tasks/` and `done/`
+   - Every `Depends` entry references a real task
+   - The progress count in TASKS.md matches the actual number of task files
+9. Report summary of changes
 
 **Output format:**
 ```
@@ -107,7 +156,13 @@ Break a large task into smaller subtasks.
    - Add subtasks to Ready (if no inter-dependencies) or Blocked
    - Update task count
 
-7. REPORT:
+7. VERIFY before reporting:
+   - The subtasks together cover the original task's full scope
+     (every acceptance criterion of the original appears in exactly one subtask)
+   - Each subtask carries the original's inherited dependencies
+   - Every task that depended on the original now depends on ALL subtasks
+
+8. REPORT:
    Task [ID] split into:
    - [ID]a: [description]
    - [ID]b: [description]
@@ -317,10 +372,10 @@ Mark a task as blocked by an external issue. Preserves branch for later resumpti
    - Format: - [ ] `ID` Task name (blocked: [reason])
    - Update "Last updated:" timestamp
 
-4. COMMIT progress and return to main:
+4. COMMIT progress and return to the main branch:
    git add -A
    git commit -m "[ID] Blocked: [reason]"
-   git checkout main
+   git checkout [main_branch from config]
    # KEEP the branch - do NOT delete it
 
 5. REPORT:
@@ -352,9 +407,11 @@ Unclaim a task without completing it. Preserves orchestration state, discards co
 2. DISCARD code changes (keep orchestration files):
    git stash  # Or: git checkout -- . (to discard)
 
-3. SWITCH to main and delete task branch:
-   git checkout main
+3. SWITCH to the main branch and delete the task branch:
+   git checkout [main_branch from config]
    git branch -D task/[ID]
+   # -D (force) is intentional here: drop discards unmerged work by design,
+   # unlike done's safe -d after merging
 
 4. UPDATE task file in .orchestra/tasks/:
    - Status: in_progress → ready
@@ -382,7 +439,6 @@ Show current state of all work.
 **Output format:**
 ```
 🎭 Orchestra Status
-═══════════════════════════════════════
 
 📎 Goal: [Title from GOAL.md]
 📊 Progress: X/Y tasks complete (Z%)
