@@ -9,14 +9,14 @@ jobs:
     name: Shellcheck init script
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: shellcheck
         run: shellcheck --severity=warning init-orchestra.sh
   smoke:
     name: Init smoke test in a scratch directory
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Run init in scratch dir and assert scaffold exists
         run: |
           mkdir /tmp/scratch && cd /tmp/scratch
