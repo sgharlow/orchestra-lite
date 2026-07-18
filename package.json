@@ -1,0 +1,40 @@
+{
+  "name": "orchestra-lite",
+  "version": "1.1.0",
+  "description": "Multi-agent Claude Code coordination — scaffold a task board, decision log, and /orchestra commands into any project",
+  "bin": {
+    "orchestra-lite": "bin/cli.js"
+  },
+  "files": [
+    "bin/",
+    "init-orchestra.sh",
+    "templates/",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "node --check bin/cli.js && bash -n init-orchestra.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sgharlow/orchestra-lite.git"
+  },
+  "homepage": "https://github.com/sgharlow/orchestra-lite#readme",
+  "bugs": {
+    "url": "https://github.com/sgharlow/orchestra-lite/issues"
+  },
+  "author": "Steve Harlow (https://github.com/sgharlow)",
+  "keywords": [
+    "claude-code",
+    "ai-coding",
+    "agentic",
+    "multi-agent",
+    "orchestration",
+    "scaffold",
+    "task-board"
+  ],
+  "license": "MIT"
+}
