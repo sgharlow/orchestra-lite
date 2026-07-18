@@ -1,0 +1,24 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+jobs:
+  shellcheck:
+    name: Shellcheck init script
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: shellcheck
+        run: shellcheck init-orchestra.sh
+  smoke:
+    name: Init smoke test in a scratch directory
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run init in scratch dir and assert scaffold exists
+        run: |
+          mkdir /tmp/scratch && cd /tmp/scratch
+          bash "$GITHUB_WORKSPACE/init-orchestra.sh"
+          test -f CLAUDE.md
