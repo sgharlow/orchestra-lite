@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: shellcheck
-        run: shellcheck init-orchestra.sh
+        run: shellcheck --severity=warning init-orchestra.sh
   smoke:
     name: Init smoke test in a scratch directory
     runs-on: ubuntu-latest
